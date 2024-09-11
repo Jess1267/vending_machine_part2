@@ -53,8 +53,8 @@ output reg [1:0]out;
 always @(*)
 begin
     if(value==money)out<=2'b00;
-    else if(value<money)out<=2'b01;
-    else if(value>money)out<=2'b10;
+    else if(value>money)out<=2'b01;
+    else if(value<money)out<=2'b10;
 end
 
 endmodule
@@ -84,7 +84,7 @@ begin
 end
 endmodule
 
-module data_path(signal,item_number,curr,money,
+module data_path(signal,item_number,curr,money,temp,
                     clk,ld_item,clr_item,data_in, ld_money,clr_money,ld_k,k,ld_a,clr_a);
                     
 input clk,ld_item,clr_item,
@@ -93,14 +93,13 @@ input clk,ld_item,clr_item,
         
 input [3:0]data_in,k;
 
-output [3:0]curr,money;
+output [3:0]curr,money,temp;
 output [1:0]signal,item_number;
 
-wire [3:0]temp;
+//wire [3:0]temp;
 
 item i (item_number,ld_item,clk,data_in[1:0],clr_item);
 money m (money,ld_money,clr_money,clk,data_in);
-
 value v (curr, ld_a,clr_a,ld_k,k,clk,temp);
 comp c (signal,curr,money);
 sub s (temp,curr,money,signal);
@@ -137,8 +136,8 @@ always @(posedge clk)
          s6:begin
              
              if(signal==2'b00)state<=s10;
-             else if(signal==2'b01)state<=s9;
-             else if(signal==2'b10)state<=s7;
+             else if(signal==2'b01)state<=s7;
+             else if(signal==2'b10)state<=s9;
              else if(signal==2'b11)state<=s8;
             end
          s7:state<=s6;
@@ -167,19 +166,19 @@ always @(state)
         
 endmodule
 
-module final_vending_machine(e,curr,state,money,item_number,start,clk,data);
+module final_vending_machine(e,curr,state,money,item_number,start,clk,data,temp,ld_money);
 input start,clk;
 input [3:0]data;
 
-output e;
-output [3:0]curr,state,money;
+output e,ld_money;
+output [3:0]curr,state,money,temp;
 output [1:0]item_number;
 
 wire [1:0]signal;
-wire ld_item,clr_item,ld_money,clr_money,ld_k,ld_a,clr_a;
+wire ld_item,clr_item,clr_money,ld_k,ld_a,clr_a;
 wire [3:0]k;
 
-data_path d (signal,item_number,curr,money,clk,ld_item,clr_item,data, ld_money,clr_money,ld_k, k,ld_a,clr_a);
+data_path d (signal,item_number,curr,money,temp,clk,ld_item,clr_item,data, ld_money,clr_money,ld_k, k,ld_a,clr_a);
 
 control_path c (clk,start,signal,item_number,state, ld_item,clr_item, ld_money,clr_money,ld_k,k,ld_a,clr_a,e);
 
