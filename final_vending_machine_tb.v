@@ -23,11 +23,13 @@
 module final_vending_machine_tb;
 reg clk,start;
 reg [3:0]data;
-wire e;
-wire [3:0]curr,state,money;
+wire e,ld_money;
+wire [3:0]curr,state,money,temp;
 wire [1:0]item_number;
 
-final_vending_machine dut (e,curr,state,money,item_number,start,clk,data_in);
+final_vending_machine dut (e,curr,state,money,item_number,start,clk,data,temp,ld_money);
+
+//final_vending_machine dut (e,curr,state,money,item_number,start,clk,data_in);
 
 initial
 begin
